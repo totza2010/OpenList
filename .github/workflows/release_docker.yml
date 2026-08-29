@@ -33,6 +33,7 @@ env:
   ARTIFACT_NAME_LITE: 'binaries_docker_release_lite'
   RELEASE_PLATFORMS: 'linux/amd64,linux/arm64,linux/arm/v7,linux/386,linux/arm/v6,linux/ppc64le,linux/riscv64,linux/loong64' ### Temporarily disable Docker builds for linux/s390x architectures for unknown reasons.
   IMAGE_PUSH: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+  HAS_DOCKERHUB: ${{ secrets.DOCKERHUB_TOKEN != '' }}
 
 permissions:
   packages: write
@@ -167,7 +168,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to DockerHub Container Registry
-        if: env.IMAGE_PUSH == 'true' && secrets.DOCKERHUB_TOKEN != ''
+        if: env.IMAGE_PUSH == 'true' && env.HAS_DOCKERHUB == 'true'
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
         with:
           username: ${{ vars.DOCKERHUB_ORG_NAME_BACKUP || env.DOCKERHUB_ORG_NAME }}
@@ -251,7 +252,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to DockerHub Container Registry
-        if: env.IMAGE_PUSH == 'true' && secrets.DOCKERHUB_TOKEN != ''
+        if: env.IMAGE_PUSH == 'true' && env.HAS_DOCKERHUB == 'true'
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
         with:
           username: ${{ vars.DOCKERHUB_ORG_NAME_BACKUP || env.DOCKERHUB_ORG_NAME }}
